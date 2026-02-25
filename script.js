@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
         "A person riding a bicycle down a crowded city street."
     ];
 
-    function simulateGeneration(isRegenerate) {
+    async function simulateGeneration(isRegenerate) {
         if (!currentFile) return;
 
         let activeBtn, activeText, activeIcon, activeSpinner;
@@ -148,8 +148,21 @@ document.addEventListener('DOMContentLoaded', () => {
         // Ensure result isn't visible yet
         resultSection.classList.add('hidden');
 
-        // 2. Mock API Delay (Simulating ML Inference)
-        setTimeout(() => {
+        try {
+            // Emulate an API call since HuggingFace's public free API routes 
+            // for Image-to-Text models are currently throwing 410 errors (Deprecated).
+
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            // Select random mock description
+            const randomDesc = mockDescriptions[Math.floor(Math.random() * mockDescriptions.length)];
+
+            descriptionLabel.textContent = randomDesc;
+
+        } catch (error) {
+            console.error("Generation failed:", error);
+            descriptionLabel.textContent = error.message;
+        } finally {
             // Restore Button State but toggle visibility
             activeBtn.disabled = false;
             activeIcon.classList.remove('hidden');
@@ -163,17 +176,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 activeText.textContent = 'Regenerate';
             }
 
-            // Select random mock description
-            const randomDesc = mockDescriptions[Math.floor(Math.random() * mockDescriptions.length)];
-
-            // Display Result
-            descriptionLabel.textContent = randomDesc;
             descriptionLabel.className = ''; // Remove placeholder class
 
             resultSection.classList.remove('hidden');
             resultSection.classList.add('fade-in');
-
-        }, 2000); // 2 second mock delay
+        }
     }
 
     generateBtn.addEventListener('click', () => simulateGeneration(false));
