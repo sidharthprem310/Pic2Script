@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pic2Script</title>
+    <!-- Google Fonts for Modern Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+
+    <!-- Feather Icons for UI glphs -->
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+
+<body>
+
+    <!-- Animated background aura elements -->
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+
+    <div class="app-container">
+
+        <header>
+            <div class="logo-area">
+                <i data-feather="aperture" class="logo-icon"></i>
+                <h1 class="project-name">Pic2<span>Script</span></h1>
+            </div>
+            <p class="subtitle">AI-Powered Image Captioning</p>
+        </header>
+
+        <main>
+            <!-- Upload Area Section -->
+            <section class="upload-section" id="upload-zone">
+
+                <input type="file" id="image-input" accept="image/png, image/jpeg, image/webp" hidden>
+
+                <div class="upload-content" id="upload-content">
+                    <div class="icon-pulse">
+                        <i data-feather="upload-cloud" class="upload-icon"></i>
+                    </div>
+                    <h2>Upload an Image</h2>
+                    <p>Drag and drop or <span>click to browse</span></p>
+                    <span class="file-hint">Supports JPG, PNG, WEBP</span>
+                </div>
+
+                <div class="preview-content hidden" id="preview-content">
+                    <img id="image-preview" src="" alt="Preview">
+                    <button id="remove-image-btn" class="icon-btn" title="Remove image">
+                        <i data-feather="x"></i>
+                    </button>
+                </div>
+
+            </section>
+
+            <!-- Action Area Section -->
+            <section class="action-section">
+                <div class="action-buttons">
+                    <button id="generate-btn" class="primary-btn" disabled>
+                        <span class="btn-text">Generate Description</span>
+                        <i data-feather="zap" class="btn-icon"></i>
+                        <div class="spinner hidden" id="btn-spinner"></div>
+                    </button>
+
+                    <button id="regenerate-btn" class="secondary-btn hidden">
+                        <span class="btn-text">Regenerate</span>
+                        <i data-feather="refresh-cw" class="btn-icon"></i>
+                        <div class="spinner hidden" id="regen-spinner"></div>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Result Area Section -->
+            <section class="result-section hidden" id="result-section">
+                <div class="result-header">
+                    <i data-feather="align-left"></i>
+                    <h3>Generated Script</h3>
+                </div>
+                <div class="result-body">
+                    <p id="description-label" class="placeholder-text">Analyzing image content...</p>
+                </div>
+                <div class="result-footer">
+                    <button class="action-link" id="copy-btn">
+                        <i data-feather="copy"></i> Copy Text
+                    </button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Initialize Feather icons
+        feather.replace();
+    </script>
+    <script src="script.js"></script>
+</body>
+
+</html>
