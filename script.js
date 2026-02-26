@@ -1,3 +1,8 @@
+import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
+env.allowLocalModels = false;
+
+let imageCaptioner = null;
+
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
     const uploadZone = document.getElementById('upload-zone');
@@ -111,17 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Action Handlers ---
 
-    const mockDescriptions = [
-        "A small brown dog running across a grassy field.",
-        "A group of people sitting around a wooden table talking.",
-        "A train approaching a busy station platform.",
-        "A bright red sports car parked in front of a modern building.",
-        "Two planes flying side by side in a clear blue sky.",
-        "A beautiful sunset reflecting over a calm ocean beach.",
-        "A person riding a bicycle down a crowded city street."
-    ];
-
-    async function simulateGeneration(isRegenerate) {
+    async function generateDescription(isRegenerate) {
         if (!currentFile) return;
 
         let activeBtn, activeText, activeIcon, activeSpinner;
@@ -149,15 +144,26 @@ document.addEventListener('DOMContentLoaded', () => {
         resultSection.classList.add('hidden');
 
         try {
-            // Emulate an API call since HuggingFace's public free API routes 
-            // for Image-to-Text models are currently throwing 410 errors (Deprecated).
+            if (!imageCaptioner) {
+                activeText.textContent = 'Downloading AI Model...';
+                imageCaptioner = await pipeline('image-to-text', 'Xenova/vit-gpt2-image-captioning');
+            }
 
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            activeText.textContent = isRegenerate ? 'Regenerating...' : 'Generating...';
 
-            // Select random mock description
-            const randomDesc = mockDescriptions[Math.floor(Math.random() * mockDescriptions.length)];
+            // Convert file to URL for Transformers.js
+            let imageUrl = URL.createObjectURL(currentFile);
 
-            descriptionLabel.textContent = randomDesc;
+            // Run inference locally
+            const output = await imageCaptioner(imageUrl);
+
+            let resultText = output[0].generated_text;
+            // capitalize first letter for presentation
+            resultText = resultText.charAt(0).toUpperCase() + resultText.slice(1);
+            descriptionLabel.textContent = resultText;
+
+            // Cleanup object URL memory
+            URL.revokeObjectURL(imageUrl);
 
         } catch (error) {
             console.error("Generation failed:", error);
@@ -183,8 +189,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    generateBtn.addEventListener('click', () => simulateGeneration(false));
-    regenerateBtn.addEventListener('click', () => simulateGeneration(true));
+    generateBtn.addEventListener('click', () => generateDescription(false));
+    regenerateBtn.addEventListener('click', () => generateDescription(true));
 
     // Copy to Clipboard
     copyBtn.addEventListener('click', async () => {
